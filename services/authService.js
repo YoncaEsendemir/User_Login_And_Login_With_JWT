@@ -18,12 +18,18 @@ const loginUser = async (email,password)=>{
     const user=users[0];
     if(!user) throw new Error("Geçersiz email veya şifre")
 
-    const isMatch=await bcrypt.compare(password,user.password);     // bu işlem ney işe yaradığına bak 
+    const isMatch=await bcrypt.compare(password,user.password);// `bcrypt.compare()`: Girilen şifreyi veritabanındaki hash ile karşılaştırır Şifreler eşleşmezse hata fırlatır
+
     if(!isMatch) throw new Error("Geçersiz email veya şifre");
 
-    const token =jwt.sign({userId:user.id, email:user.email},process.env.JWT_SECRET,{expiresIn:JWT_EXPIRES_IN,}); //buna da bak
+    /* jwt, genellikle jsonwebtoken adlı bir JavaScript kütüphanesinin bir nesnesidir. Bu kütüphane, JWT oluşturma ve doğrulama işlemlerini kolaylaştırmak için 
+    kullanılır. Bu satırda, sign() metodu çağrılarak yeni bir JWT oluşturulur. */
+    const token =jwt.sign({userId:user.id, email:user.email},process.env.JWT_SECRET,{expiresIn:JWT_EXPIRES_IN,}); 
+    //jwt.sigt() : Kullanıcı bilgilerini içeren bir JWT oluşturur. Token'ın içeriği:userId ve email 
+    //Token'ın imzalanması için JWT_Secret kullınılır , token'ın geçerlilk süresi JWT_EXPIRES_IN ile belirlenir
+    //Başarılı giriş mesajı ve token döner
 
-    return {token};
+    return {message: "Login successful", token};
 };  
 
 const getProfile = async(userId)=>{
@@ -36,4 +42,4 @@ module.exports={
     registerUser,
     loginUser,
     getProfile
-}
+};
